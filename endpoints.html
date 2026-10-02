@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PVault API Endpoints</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #111827;
+        --panel-2: #1f2937;
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        --green: #22c55e;
+        --blue: #60a5fa;
+        --yellow: #fbbf24;
+        --red: #f87171;
+        --border: rgba(148, 163, 184, 0.2);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+        color: var(--text);
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px 60px;
+      }
+
+      header {
+        margin-bottom: 24px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 2.2rem;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        margin: 0;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(96, 165, 250, 0.15);
+        color: var(--blue);
+        border: 1px solid rgba(96, 165, 250, 0.25);
+        font-size: 0.8rem;
+        margin-bottom: 18px;
+      }
+
+      .endpoint {
+        background: rgba(17, 24, 39, 0.95);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 22px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      .top-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+
+      .method {
+        display: inline-block;
+        font-weight: 700;
+        font-size: 0.8rem;
+        padding: 8px 10px;
+        border-radius: 8px;
+        letter-spacing: 0.05em;
+      }
+
+      .post { background: rgba(34, 197, 94, 0.15); color: var(--green); border: 1px solid rgba(34, 197, 94, 0.3); }
+      .get { background: rgba(96, 165, 250, 0.15); color: var(--blue); border: 1px solid rgba(96, 165, 250, 0.3); }
+      .delete { background: rgba(248, 113, 113, 0.12); color: var(--red); border: 1px solid rgba(248, 113, 113, 0.3); }
+
+      .path {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .description {
+        color: var(--muted);
+        margin: 6px 0 16px;
+      }
+
+      h3 {
+        margin: 18px 0 10px;
+        font-size: 0.95rem;
+        color: #dfeaf7;
+      }
+
+      pre {
+        background: var(--panel-2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 16px;
+        overflow-x: auto;
+        color: #e2e8f0;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      code {
+        font-family: SFMono-Regular, Consolas, monospace;
+      }
+
+      .note {
+        margin-top: 18px;
+        padding: 12px 14px;
+        border-left: 4px solid var(--yellow);
+        background: rgba(251, 191, 36, 0.08);
+        color: #fef3c7;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="badge">PVault API Documentation</div>
+        <h1>Authentication Endpoints</h1>
+        <p class="subtitle">Base URL: http://localhost:3000/api/v1</p>
+      </header>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method post">POST</span>
+          <span class="path">/users</span>
+        </div>
+        <div class="description">Register a new user account.</div>
+
+        <h3>Request body</h3>
+        <pre><code>{
+  "email": "user@example.com",
+  "password": "Password123!"
+}</code></pre>
+
+        <h3>Success response (201)</h3>
+        <pre><code>{
+  "id": "64d5f22c1b2e4d9a8e1f3c6d",
+  "email": "user@example.com",
+  "createdAt": "2026-10-02T12:00:00.000Z"
+}</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method post">POST</span>
+          <span class="path">/sessions</span>
+        </div>
+        <div class="description">Log in with an email and password to get a JWT token.</div>
+
+        <h3>Request body</h3>
+        <pre><code>{
+  "email": "user@example.com",
+  "password": "Password123!"
+}</code></pre>
+
+        <h3>Success response (200)</h3>
+        <pre><code>{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "tokenType": "Bearer",
+  "expiresIn": "1h"
+}</code></pre>
+
+        <div class="note">
+          Use the returned token in the Authorization header as: Bearer &lt;token&gt;
+        </div>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method delete">DELETE</span>
+          <span class="path">/sessions/current</span>
+        </div>
+        <div class="description">Log out the current authenticated user.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+
+        <h3>Success response (204)</h3>
+        <pre><code>No content</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method get">GET</span>
+          <span class="path">/users/me</span>
+        </div>
+        <div class="description">Get the authenticated user's profile details.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+
+        <h3>Success response (200)</h3>
+        <pre><code>{
+  "id": "64d5f22c1b2e4d9a8e1f3c6d",
+  "email": "user@example.com",
+  "createdAt": "2026-10-02T12:00:00.000Z"
+}</code></pre>
+      </section>
+    </div>
+  </body>
+</html>
