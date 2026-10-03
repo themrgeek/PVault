@@ -2,11 +2,11 @@
   "name": "pvault-api",
   "version": "1.0.0",
   "description": "PValult - A secure password vault API",
-  "main": "api/index.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch api/index.js",
-    "start": "node api/index.js",
+    "dev": "node --watch server.js",
+    "start": "node server.js",
     "lint": "eslint src/ api/",
     "format": "prettier --write \"src/**/*.js\" \"api/**/*.js\"",
     "test": "node --test"

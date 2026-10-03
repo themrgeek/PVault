@@ -23,10 +23,16 @@ const userSchema = new mongoose.Schema(
 )
 // isModified is a method provided by Mongoose that checks if a particular field has been modified since the last save. In this case, it checks if the password field has been modified before hashing it. If the password hasn't been modified, it skips the hashing process and moves to the next middleware or operation.
 // Hash password before saving
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+// CHANGED: This hook uses async/promise style instead of the old `next` callback.
+// An async function returns a Promise, and Mongoose waits for it before saving.
+// This `return;` only ends the hook when the password is unchanged. It fulfills
+// the Promise with `undefined`, which tells Mongoose the hook finished; saving continues.
+// Otherwise, `await` waits for bcrypt to hash the changed password. If hashing
+// fails, the Promise rejects and the save fails. `next()` is callback-style and
+// is not provided to this async hook by Mongoose 9.
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 12);
-  next();
 });
 
 // Compare password method

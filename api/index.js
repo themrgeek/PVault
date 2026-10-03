@@ -12,7 +12,9 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '10kb' })); // Limit body size
-
+// What is helmet cors and express.json doing here?
+// Helmet is a middleware that helps secure Express apps by setting various HTTP headers to protect against common web vulnerabilities. 
+// It enhances the security of the application by adding headers like Content Security Policy, X-Frame-Options, and others.
 // Rate limiting for auth endpoints
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -20,7 +22,7 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: {
-    type: 'https://api.pvault.com/problems/rate-limit',
+    type: '',
     title: 'Too Many Requests',
     status: 429,
   },
