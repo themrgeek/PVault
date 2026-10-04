@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import { connectDB } from '../src/config/db.js';
 import authRoutes from '../src/routes/auth.routes.js';
 import { errorHandler } from '../src/middleware/errorHandler.js';
+import vaultRoutes from '../src/routes/vault.routes.js';
 
 const app = express();
 
@@ -34,9 +35,11 @@ const authLimiter = rateLimit({
 // Connect to MongoDB
 await connectDB();
 
-// Routes
+// Routes for authentication
 app.use('/api/v1', authLimiter, authRoutes);
-
+// Routes for vault items
+app.use('/api/v1', authLimiter, authRoutes);
+app.use('/api/v1/vault-items', vaultRoutes); 
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });

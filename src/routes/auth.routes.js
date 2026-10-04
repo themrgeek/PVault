@@ -5,6 +5,7 @@ import {
   login,
   logout,
   getMe,
+  updatePassword,
 } from '../controllers/auth.controllers.js';
 import {
   backupMyAuthData,
@@ -24,6 +25,7 @@ router.post('/sessions', login);           // Login
 //  If the token is valid, it allows the request to proceed to the logout controller; otherwise, it responds with an authentication error.
 router.delete('/sessions/current', authenticate, logout); // Logout
 router.get('/users/me', authenticate, getMe); // Get current user
+router.patch('/users/me/password', authenticate, updatePassword);
 router.get('/auth-logs', authenticate, getMyAuthLogs);
 router.delete('/auth-logs', authenticate, deleteMyAuthLogs);
 router.get('/auth-logs/export', authenticate, exportMyAuthLogs);

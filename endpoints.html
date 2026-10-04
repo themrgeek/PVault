@@ -85,6 +85,7 @@
       }
 
       .post { background: rgba(34, 197, 94, 0.15); color: var(--green); border: 1px solid rgba(34, 197, 94, 0.3); }
+      .patch { background: rgba(251, 191, 36, 0.12); color: var(--yellow); border: 1px solid rgba(251, 191, 36, 0.25); }
       .get { background: rgba(96, 165, 250, 0.15); color: var(--blue); border: 1px solid rgba(96, 165, 250, 0.3); }
       .delete { background: rgba(248, 113, 113, 0.12); color: var(--red); border: 1px solid rgba(248, 113, 113, 0.3); }
 
@@ -134,7 +135,7 @@
     <div class="container">
       <header>
         <div class="badge">PVault API Documentation</div>
-        <h1>Authentication Endpoints</h1>
+        <h1>Authentication &amp; Vault Endpoints</h1>
         <p class="subtitle">Base URL: http://localhost:3000/api/v1</p>
       </header>
 
@@ -214,6 +215,33 @@
   "email": "user@example.com",
   "createdAt": "2026-10-02T12:00:00.000Z"
 }</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method patch">PATCH</span>
+          <span class="path">/users/me/password</span>
+        </div>
+        <div class="description">Change the authenticated user's password after verifying the current password.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;
+Content-Type: application/json</code></pre>
+
+        <h3>Request body</h3>
+        <pre><code>{
+  "currentPassword": "CurrentPassword123!",
+  "newPassword": "NewPassword456!"
+}</code></pre>
+
+        <h3>Success response (200)</h3>
+        <pre><code>{
+  "message": "Password updated successfully"
+}</code></pre>
+
+        <div class="note">
+          The new password must be at least 8 characters and must differ from the current password.
+        </div>
       </section>
 
       <section class="endpoint">
@@ -304,6 +332,144 @@ Content-Type: application/json
     }
   ]
 }</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method post">POST</span>
+          <span class="path">/vault-items</span>
+        </div>
+        <div class="description">Create a new saved vault item for the authenticated user.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;
+Content-Type: application/json</code></pre>
+
+        <h3>Request body</h3>
+        <pre><code>{
+  "siteName": "GitHub",
+  "siteUrl": "https://github.com",
+  "username": "octocat",
+  "password": "S3cretPass!",
+  "notes": "Personal account"
+}</code></pre>
+
+        <h3>Success response (201)</h3>
+        <pre><code>{
+  "id": "64d5f22c1b2e4d9a8e1f3c6d",
+  "siteName": "GitHub",
+  "siteUrl": "https://github.com",
+  "username": "octocat",
+  "notes": "Personal account",
+  "createdAt": "2026-10-04T09:30:00.000Z",
+  "updatedAt": "2026-10-04T09:30:00.000Z"
+}</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method get">GET</span>
+          <span class="path">/vault-items</span>
+        </div>
+        <div class="description">List all vault items for the authenticated user with pagination and optional filtering.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+
+        <h3>Query parameters</h3>
+        <pre><code>limit=20
+offset=0
+sort=-createdAt
+siteName=github</code></pre>
+
+        <h3>Success response (200)</h3>
+        <pre><code>{
+  "data": [
+    {
+      "id": "64d5f22c1b2e4d9a8e1f3c6d",
+      "siteName": "GitHub",
+      "siteUrl": "https://github.com",
+      "username": "octocat",
+      "notes": "Personal account",
+      "createdAt": "2026-10-04T09:30:00.000Z",
+      "updatedAt": "2026-10-04T09:30:00.000Z"
+    }
+  ],
+  "pagination": {
+    "limit": 20,
+    "offset": 0,
+    "total": 1,
+    "next": null
+  }
+}</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method get">GET</span>
+          <span class="path">/vault-items/:itemId</span>
+        </div>
+        <div class="description">Retrieve one saved vault item, including the decrypted password for the owner.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+
+        <h3>Success response (200)</h3>
+        <pre><code>{
+  "id": "64d5f22c1b2e4d9a8e1f3c6d",
+  "siteName": "GitHub",
+  "siteUrl": "https://github.com",
+  "username": "octocat",
+  "password": "S3cretPass!",
+  "notes": "Personal account",
+  "createdAt": "2026-10-04T09:30:00.000Z",
+  "updatedAt": "2026-10-04T09:30:00.000Z"
+}</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method patch">PATCH</span>
+          <span class="path">/vault-items/:itemId</span>
+        </div>
+        <div class="description">Update selected fields on a vault item.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;
+Content-Type: application/json</code></pre>
+
+        <h3>Request body</h3>
+        <pre><code>{
+  "siteName": "GitHub",
+  "username": "octocat2",
+  "password": "NewPassword456!",
+  "notes": "Updated personal account"
+}</code></pre>
+
+        <h3>Success response (200)</h3>
+        <pre><code>{
+  "id": "64d5f22c1b2e4d9a8e1f3c6d",
+  "siteName": "GitHub",
+  "siteUrl": "https://github.com",
+  "username": "octocat2",
+  "notes": "Updated personal account",
+  "createdAt": "2026-10-04T09:30:00.000Z",
+  "updatedAt": "2026-10-04T09:45:00.000Z"
+}</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method delete">DELETE</span>
+          <span class="path">/vault-items/:itemId</span>
+        </div>
+        <div class="description">Delete a specific vault item owned by the authenticated user.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+
+        <h3>Success response (204)</h3>
+        <pre><code>No content</code></pre>
       </section>
     </div>
   </body>

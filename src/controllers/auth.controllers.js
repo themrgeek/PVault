@@ -148,3 +148,47 @@ export async function getMe(req, res, next) {
     next(error);
   }
 }
+
+// PATCH /api/v1/users/me/password — Update password
+export async function updatePassword(req, res, next) {
+  try {
+    const { currentPassword, newPassword } = req.body ?? {};
+    if (
+      typeof currentPassword !== 'string' ||
+      typeof newPassword !== 'string' ||
+      currentPassword.length === 0 ||
+      newPassword.length < 8
+    ) {
+      throw new ApiError(400, 'Provide the current password and a new password of at least 8 characters');
+    }
+
+    const user = await User.findById(req.userId).select('+password');
+    if (!user) {
+      throw new ApiError(404, 'User not found');
+    }
+
+    const isCurrentPasswordValid = await user.comparePassword(currentPassword);
+    if (!isCurrentPasswordValid) {
+      throw new ApiError(401, 'Current password is incorrect');
+    }
+
+    if (currentPassword === newPassword) {
+      throw new ApiError(400, 'New password must be different from the current password');
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    await logAuthEvent({
+      userId: user._id,
+      eventType: 'password_changed',
+      reason: 'user_initiated',
+      req,
+    });
+
+    res.set('Cache-Control', 'no-store');
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    next(error);
+  }
+}

@@ -20,6 +20,7 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN,
   nodeEnv: process.env.NODE_ENV,
+  encryptionKey: process.env.ENCRYPTION_KEY,
 };
 // Fail fast if critical secrets are missing
 const required = [
@@ -28,6 +29,7 @@ const required = [
   "JWT_SECRET",
   "JWT_EXPIRES_IN",
   "NODE_ENV",
+  "ENCRYPTION_KEY",
 ];
 required.forEach((key) => {
   if (!process.env[key]) {
@@ -38,3 +40,12 @@ required.forEach((key) => {
 // The required array is used to define a list of critical environment variables that must be present for the application to run correctly.
 // It contains the names of the environment variables that are essential for the application's configuration and functionality. 
 // By checking for the presence of these variables at startup, we can ensure that the application fails fast if any of them are missing, preventing runtime errors and misconfigurations.
+
+// Validation of an encryption key:
+// Validation of this key is important because it ensures that the key meets the required security standards and is suitable for use in cryptographic operations. An invalid or weak encryption key can compromise the security of sensitive data, making it vulnerable to attacks. By validating the encryption key, we can ensure that it has the correct length, format, and strength, which helps protect the confidentiality and integrity of the data being encrypted.
+
+if (config.encryptionKey.length !== 64) {
+  throw new Error(
+    "Invalid encryption key length. Must be 64 characters (256 bits) long."
+  );
+}
