@@ -14,7 +14,8 @@ export function errorHandler(err, req, res, next) {
   // Handle Mongoose duplicate key error
   if (err.code === 11000) {
     return res.status(409).json({
-      type: 'https://api.pvault.com/problems/conflict',
+      type: 'https://api.pvault.com/problems/conflict', // what is this api/pvault.com/problems/conflict?
+      // This URL is a reference to a problem type in the API. It follows the Problem Details for HTTP APIs specification (RFC 7807), which provides a standardized way to convey error information in HTTP responses. The URL serves as a unique identifier for the specific type of error (in this case, a conflict due to a duplicate key) and can be used by clients to understand the nature of the error and how to handle it.
       title: 'Email already exists',
       status: 409,
       instance: req.originalUrl,
@@ -41,4 +42,5 @@ export function errorHandler(err, req, res, next) {
     status: 500,
     instance: req.originalUrl,
   });
+  
 }

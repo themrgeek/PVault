@@ -6,6 +6,12 @@ import {
   logout,
   getMe,
 } from '../controllers/auth.controllers.js';
+import {
+  backupMyAuthData,
+  deleteMyAuthLogs,
+  exportMyAuthLogs,
+  getMyAuthLogs,
+} from '../controllers/authLogs.controllers.js';
 
 const router = Router();
 
@@ -18,5 +24,9 @@ router.post('/sessions', login);           // Login
 //  If the token is valid, it allows the request to proceed to the logout controller; otherwise, it responds with an authentication error.
 router.delete('/sessions/current', authenticate, logout); // Logout
 router.get('/users/me', authenticate, getMe); // Get current user
+router.get('/auth-logs', authenticate, getMyAuthLogs);
+router.delete('/auth-logs', authenticate, deleteMyAuthLogs);
+router.get('/auth-logs/export', authenticate, exportMyAuthLogs);
+router.get('/auth-logs/backup', authenticate, backupMyAuthData);
 
 export default router;

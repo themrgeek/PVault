@@ -22,7 +22,10 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: {
-    type: '',
+    type: 'https://api.pvault.com/problems/too-many-requests', // what is this api/pvault.com/problems/too-many-requests?
+    // This URL is a reference to a problem type in the API. It follows the Problem Details for HTTP APIs specification (RFC 7807), which provides a standardized way to convey error information in HTTP responses.
+    //  The URL serves as a unique identifier for the specific type of error (in this case, too many requests) and can be used by clients to understand the nature of the error and how to handle it.
+    // Can I require to buy domain api.pvault.com to use this? No, you do not need to buy the domain api.pvault.com to use this. The URL is just a reference to a problem type in the API and does not require ownership of the domain. It is used for documentation purposes and to provide a standardized way to convey error information in HTTP responses.
     title: 'Too Many Requests',
     status: 429,
   },

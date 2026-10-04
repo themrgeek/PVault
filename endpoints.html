@@ -215,6 +215,96 @@
   "createdAt": "2026-10-02T12:00:00.000Z"
 }</code></pre>
       </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method get">GET</span>
+          <span class="path">/auth-logs</span>
+        </div>
+        <div class="description">View all authentication logs belonging to the authenticated user, newest first.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+
+        <h3>Success response (200)</h3>
+        <pre><code>{
+  "logs": [
+    {
+      "id": "74d5f22c1b2e4d9a8e1f3c6d",
+      "timestamp": "2026-10-04T09:30:00.000Z",
+      "eventType": "login_succeeded",
+      "details": { "ipAddress": "203.0.113.10" }
+    }
+  ]
+}</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method delete">DELETE</span>
+          <span class="path">/auth-logs</span>
+        </div>
+        <div class="description">Delete authentication logs belonging to the authenticated user.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+
+        <h3>Success response (200)</h3>
+        <pre><code>{
+  "deletedCount": 12
+}</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method get">GET</span>
+          <span class="path">/auth-logs/export</span>
+        </div>
+        <div class="description">Download the authenticated user's authentication logs as newline-delimited JSON in a text file.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+
+        <h3>Success response (200)</h3>
+        <pre><code>Content-Type: text/plain; charset=utf-8
+Content-Disposition: attachment; filename="auth-logs.txt"
+
+{"timestamp":"2026-10-04T09:30:00.000Z","userId":"64d5f22c1b2e4d9a8e1f3c6d","eventType":"login_succeeded","details":{"ipAddress":"203.0.113.10"}}</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <div class="top-row">
+          <span class="method get">GET</span>
+          <span class="path">/auth-logs/backup</span>
+        </div>
+        <div class="description">Download a JSON backup of the authenticated user's account metadata and authentication logs. Password hashes are not included.</div>
+
+        <h3>Headers</h3>
+        <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+
+        <h3>Success response (200)</h3>
+        <pre><code>Content-Disposition: attachment; filename="auth-backup.json"
+Content-Type: application/json
+
+{
+  "exportedAt": "2026-10-04T09:30:00.000Z",
+  "user": {
+    "id": "64d5f22c1b2e4d9a8e1f3c6d",
+    "email": "user@example.com",
+    "createdAt": "2026-10-02T12:00:00.000Z",
+    "updatedAt": "2026-10-03T12:00:00.000Z"
+  },
+  "authLogs": [
+    {
+      "id": "74d5f22c1b2e4d9a8e1f3c6d",
+      "timestamp": "2026-10-04T09:30:00.000Z",
+      "userId": "64d5f22c1b2e4d9a8e1f3c6d",
+      "eventType": "login_succeeded",
+      "details": { "ipAddress": "203.0.113.10" }
+    }
+  ]
+}</code></pre>
+      </section>
     </div>
   </body>
 </html>

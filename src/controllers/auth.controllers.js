@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { randomUUID } from 'node:crypto';
 import { User } from '../models/User.js';
+import { logAuthEvent } from '../logger/auth.logs.js';
 import { config } from '../config/env.js';
 import { ApiError } from '../utils/ApiError.js';
 
@@ -43,6 +44,7 @@ export async function register(req, res, next) {
     }
 
     const user = await User.create({ email, password });
+    await logAuthEvent({ userId: user._id, eventType: 'registration_succeeded', req });
 
     res.status(201).json({
       id: user._id,
@@ -50,7 +52,8 @@ export async function register(req, res, next) {
       createdAt: user.createdAt,
     });
   } catch (error) {
-    next(error);
+    next(error); // The next(error) function is used to pass the error to the next middleware in the Express.js stack, which is typically an error-handling middleware. 
+    // In this context, if an error occurs during the registration process (e.g., email already exists, validation error), calling next(error) will forward the error to the error handler, allowing it to generate an appropriate HTTP response for the client.
   }
 }
 
@@ -61,15 +64,27 @@ export async function login(req, res, next) {
 
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
+      await logAuthEvent({
+        eventType: 'login_failed',
+        reason: 'invalid_credentials',
+        req,
+      });
       throw new ApiError(401, 'Invalid email or password');
     }
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
+      await logAuthEvent({
+        userId: user._id,
+        eventType: 'login_failed',
+        reason: 'invalid_credentials',
+        req,
+      });
       throw new ApiError(401, 'Invalid email or password');
     }
 
     const token = generateToken(user._id);
+    await logAuthEvent({ userId: user._id, eventType: 'login_succeeded', req });
 
     res.set('Cache-Control', 'no-store');
     res.status(200).json({
@@ -104,6 +119,13 @@ export async function logout(req, res) {
       // Keep logout idempotent for missing, invalid, or expired tokens.
     }
   }
+
+  await logAuthEvent({
+    userId: req.userId,
+    eventType: 'logout_succeeded',
+    reason: 'user_initiated',
+    req,
+  });
 
   res.set('Cache-Control', 'no-store');
   res.status(204).send();

@@ -34,3 +34,7 @@ required.forEach((key) => {
     throw new Error(`Missing required environment variable: ${key}`);
   }
 });
+// what is the required array for?
+// The required array is used to define a list of critical environment variables that must be present for the application to run correctly.
+// It contains the names of the environment variables that are essential for the application's configuration and functionality. 
+// By checking for the presence of these variables at startup, we can ensure that the application fails fast if any of them are missing, preventing runtime errors and misconfigurations.
